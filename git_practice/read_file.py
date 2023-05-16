@@ -1,7 +1,8 @@
 import os
 import openpyxl
 
-root_dir = 'C:/Users/steven_hsu/Documents/code/test'
+root_dir = '/Users/xuhaoxiang/Documents/test' # for Mac
+# 'C:/Users/steven_hsu/Documents/code/test' for ASUS laptop
 os.chdir(root_dir)
 
 level_1_list = []
@@ -10,7 +11,7 @@ for level_1_dir in os.listdir():
     if os.path.isdir(level_1_dir) == True:
         level_1_list.append(level_1_dir)
 
-# print(level_1_list)
+print(level_1_list)
 
 level_2_list = []
 # wb = openpyxl.load_workbook('list.xlsx')
@@ -20,7 +21,7 @@ for level_1_dir in level_1_list:
     level_2_dir = os.listdir(os.path.join(root_dir, level_1_dir))
     level_2_list.append(level_2_dir)
     
-# print(level_2_list)
+print(level_2_list)
 
 
 
