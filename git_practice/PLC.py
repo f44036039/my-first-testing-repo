@@ -1,7 +1,8 @@
 import os
+from collections import defaultdict
 
-
-os.chdir('Trial')
+os.chdir('/Users/xuhaoxiang/Documents/test_2')
+# os.chdir('Trial')
 # print(os.getcwd())
 # print(os.listdir())
 
@@ -23,7 +24,7 @@ def create_dict(name_list,i):
     
     name_dict = {}
     name_set = set()
-    print(name_list)
+    # print(name_list)
 
     for file_name in name_list:
         
@@ -52,6 +53,25 @@ print(jedi_dict)
 print(x16_dict)
 print(x20_dict)
 print(x23_dict)
+
+dd = defaultdict(list)
+
+for d in (jedi_dict, x16_dict, x20_dict, x23_dict):
+    for key, value in d.items():
+        dd[key].append(value)
+
+print(dd)
+
+result = {}
+
+for key, value in dd.items():
+    flat_list = []
+    for sublist in value:
+        for element in sublist:
+            flat_list.append(element)
+    result[key] = set(flat_list)
+
+print(result)
 
 '''common = set(jedi_list).union(set(x16_list))
 print(common)
