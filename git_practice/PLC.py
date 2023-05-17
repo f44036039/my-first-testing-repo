@@ -2,8 +2,8 @@ import os
 from collections import defaultdict
 import openpyxl
 
-os.chdir('/Users/xuhaoxiang/Documents/test_2') # for mac
-# os.chdir('Trial') # for ASUS
+# os.chdir('/Users/xuhaoxiang/Documents/test_2') # for mac
+os.chdir('Trial') # for ASUS
 # print(os.getcwd())
 # print(os.listdir())
 
@@ -78,10 +78,9 @@ wb = openpyxl.Workbook()
 ws = wb.active
 
 for key, value in result.items():
-    list1 = [key]
+    list1 = [folder_name ,key]
     for itr in value:
         list1.append(itr)
     ws.append(list1)
 
 wb.save('try.xlsx')
-
