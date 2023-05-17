@@ -1,8 +1,9 @@
 import os
 from collections import defaultdict
+import openpyxl
 
-os.chdir('/Users/xuhaoxiang/Documents/test_2')
-# os.chdir('Trial')
+os.chdir('/Users/xuhaoxiang/Documents/test_2') # for mac
+# os.chdir('Trial') # for ASUS
 # print(os.getcwd())
 # print(os.listdir())
 
@@ -49,10 +50,10 @@ x16_dict = create_dict(x16_list, 1)
 x20_dict = create_dict(x20_list, 2)
 x23_dict = create_dict(x23_list, 3)
 
-print(jedi_dict)
+'''print(jedi_dict)
 print(x16_dict)
 print(x20_dict)
-print(x23_dict)
+print(x23_dict)'''
 
 dd = defaultdict(list)
 
@@ -60,7 +61,7 @@ for d in (jedi_dict, x16_dict, x20_dict, x23_dict):
     for key, value in d.items():
         dd[key].append(value)
 
-print(dd)
+# print(dd)
 
 result = {}
 
@@ -73,22 +74,14 @@ for key, value in dd.items():
 
 print(result)
 
-'''common = set(jedi_list).union(set(x16_list))
-print(common)
-
 wb = openpyxl.Workbook()
 ws = wb.active
 
-for element in common:
-    if element in jedi_dict and element in x16_dict:
-        result = set(jedi_dict[element]).union(set(x16_dict[element]))
-    else:
-        if element in jedi_dict:
-            result = set(jedi_dict[element])
-        if element in x16_dict:
-            result = set(x16_dict[element])
-
-    list1 = list(result)
+for key, value in result.items():
+    list1 = [key]
+    for itr in value:
+        list1.append(itr)
     ws.append(list1)
-wb.save('try.xlsx')'''
+
+wb.save('try.xlsx')
 
