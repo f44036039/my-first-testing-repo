@@ -1,5 +1,5 @@
 import os
-import openpyxl
+
 
 os.chdir('Trial')
 # print(os.getcwd())
@@ -19,54 +19,41 @@ print(x16_list)
 print(x20_list)
 print(x23_list)'''
 
-jedi_dict = {}
-jedi_set = set()
+def create_dict(name_list,i):
+    
+    name_dict = {}
+    name_set = set()
+    print(name_list)
 
-for file_name in jedi_list:
+    for file_name in name_list:
         
-    with open(os.path.join(os.path.join(level_1_list[0],folder_name),file_name), 'r') as f:
-        # Create an empty list to store the lines
-        lines = []
+        with open(os.path.join(os.path.join(level_1_list[i],folder_name),file_name), 'r') as f:
+            # Create an empty list to store the lines
+            lines = []
 
-        # Iterate over the lines of the file
-        for line in f:
-            # Remove the newline character at the end of the line
-            line = line.strip()
+            # Iterate over the lines of the file
+            for line in f:
+                # Remove the newline character at the end of the line
+                line = line.strip()
 
-            # Append the line to the list
-            lines.append(line)
-    jedi_dict[file_name] = lines
+                # Append the line to the list
+                lines.append(line)
+        name_dict[file_name] = lines
+
+    return name_dict
+
+
+jedi_dict = create_dict(jedi_list, 0)
+x16_dict = create_dict(x16_list, 1)
+x20_dict = create_dict(x20_list, 2)
+x23_dict = create_dict(x23_list, 3)
 
 print(jedi_dict)
-# print(len(jedi_dict))
-# print(len(jedi_dict['SB.txt']))
-
-x16_dict = {}
-x16_set = set()
-
-for file_name in x16_list:
-        
-    with open(os.path.join(os.path.join(level_1_list[1],folder_name),file_name), 'r') as f:
-        # Create an empty list to store the lines
-        lines = []
-
-        # Iterate over the lines of the file
-        for line in f:
-            # Remove the newline character at the end of the line
-            line = line.strip()
-
-            # Append the line to the list
-            lines.append(line)
-    x16_dict[file_name] = lines
-
 print(x16_dict)
-# print(len(x16_dict))
-# print(len(x16_dict['SB.txt']))
+print(x20_dict)
+print(x23_dict)
 
-print(jedi_list)
-print(x16_list)
-
-common = set(jedi_list).union(set(x16_list))
+'''common = set(jedi_list).union(set(x16_list))
 print(common)
 
 wb = openpyxl.Workbook()
@@ -83,5 +70,5 @@ for element in common:
 
     list1 = list(result)
     ws.append(list1)
-wb.save('try.xlsx')
+wb.save('try.xlsx')'''
 
