@@ -90,8 +90,6 @@ def get_level_2_set(root):
         if os.path.isdir(level_1_dir) == True:
             level_1_list.append(level_1_dir)
 
-
-    total_list = []
     set_of_level_2 = set()
 
     for i in range(len(level_1_list)):
