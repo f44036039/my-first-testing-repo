@@ -1,6 +1,59 @@
 import os
-import openpyxl
 from collections import defaultdict
+
+# ------------------------------------------------------------------------------------------
+# Problem Statement:
+# Before:
+#               root
+#                |
+#          ----------------------
+#         |      |       |       |
+#       jedi    x16     x20     x23         # level 1
+#         |      |       |       |
+#   --------    -----   -----   -----
+#   |   |  |    |    |  |    |  |    |
+#  D10 D11 PLC  D10 PLC D10 PLC D63  PLC    # level 2
+#   |   |  |    |    |  |    |  |    |
+#  G.txt   G.txt  G.txt   G.txt A.txt       # level 3 (or file)
+
+# Combine everything under G.txt level, then create file structure as
+# After :
+#               root
+#                |
+#         ----------------------
+#        |      |       |       |
+#       D10    D11      D63    PLC
+#        |      |       |       |
+#      G.txt   G.txt  A.txt   G.txt 
+
+# The content under D10 / G.txt should not be mixed with D11 / G.txt or PLC / G.txt
+#------------------------------------------------------------------------------------------------
+
+# Sol step:
+# step 1, read level 2 directories into a set, set_of_level_2 = {'D10', 'D11', ..., 'PLC'},   function name: get_level_2_set
+
+# step 2: for every element inside this set, for example, 'D10', crate a list of dictionaries,functiona name: create_list, crate_dict
+#                                   total_list = [{'G.txt':['ODXP', 'ODYP', ...],          (Every line under jedi/D10/G.txt)
+#                                                  'MB.txt':['HDXP','HDDP', ...], ...}, 
+
+#                                                 {'G.txt':['ODXP', 'ODYP', ...],          (Every line under x16/D10/G.txt)
+#                                                  'MB.txt':['HDXP','HDDP', ...], ...}]    (total_list should have 1 to 4 dictionaries, 
+#                                                                                           depends on if the D10 is under x20, for example)
+
+# step 3: Merge the dictionaries inside total_list into 1 dictionary using default dictionary, function name: create_default_dict
+#                                   result = {'G.txt':{'ODXP', 'ODYP', ...},          
+#                                             'MB.txt':{'HDXP','HDDP', ...}, ...}
+
+# step 4: Convert this dictioary into a 2d list, function name: create_2d_list
+#                                   result_list = [['D10', 'G.txt', 'ODXP', 'ODYP'...],
+#                                                  ['D10', 'MB.txt', 'HDXP', 'HDDP'...]...]
+
+# step 5: Append this list to other level 2 directory name list, to create final_result_list, function name: main
+#                                    final_result_list = [['D10', 'G.txt', 'ODXP', 'ODYP'...],
+#                                                         ['D10', 'MB.txt', 'HDXP', 'HDDP'...],
+#                                                         ['D11',  'G.txt', 'ABCD', 'HGDJ']...]
+
+# step 6: Create file structure based on  final_result_list, function name: create_file_structure
 
 def get_level_2_set(root):
 
@@ -25,6 +78,9 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
     level_3_dict = {}
 
     for file_name in level_3_list:
+        if os.path.isdir(file_name) == True:
+            # print('found file')
+            level_3_list.remove(file_name)
         
         with open(os.path.join(os.path.join(level_1_list[i],folder_name),file_name), 'r') as f:
             # Create an empty list to store the lines
@@ -48,9 +104,7 @@ def create_list(folder_name):
         if os.path.isdir(level_1_dir) == True:
             level_1_list.append(level_1_dir)
 
-    # print(level_1_list)
     total_list = []
-    set_of_level_2 = set()
 
     for i in range(len(level_1_list)):
         level_2_list = os.listdir(level_1_list[i])
@@ -58,13 +112,15 @@ def create_list(folder_name):
         if '.DS_Store' in level_2_list:
             level_2_list.remove('.DS_Store') # for Mac
 
-        for itr in level_2_list:
-            set_of_level_2.add(itr)
+        if 'LastSize.txt' in level_2_list:
+                level_2_list.remove('LastSize.txt')
 
         if folder_name in level_2_list:
             file_list = os.listdir(os.path.join(level_1_list[i],folder_name))
-            file_dict = create_dict(file_list, i, level_1_list, folder_name)
-            total_list.append(file_dict)
+            if 'LastSize.txt' in file_list:
+                file_list.remove('LastSize.txt')
+            level_3_dict = create_dict(file_list, i, level_1_list, folder_name)
+            total_list.append(level_3_dict)
 
     return total_list
 
@@ -97,31 +153,26 @@ def create_2d_list(result,dir_name):
         for itr in value:
             list1.append(itr)
         result_list.append(list1)
-
-    '''wb = openpyxl.load_workbook('/Users/xuhaoxiang/code/empire.xlsx')
-    ws = wb.active
-    print(result)
-    
-        # print(list1)
-
-    os.chdir('/Users/xuhaoxiang/code')
-    wb.save('empire.xlsx')'''
     
     return result_list
 
 
 def main(root):
     set_of_level_2 = get_level_2_set(root)
-    print(set_of_level_2)
+    set_of_level_2.discard('LastSize.txt')
+    
+    final_result_list = []
 
     for dir_name in set_of_level_2:
 
         total_list = create_list(dir_name)
-        # print(total_list)
+        print(total_list)
         result = create_default_dict(total_list)
-        result_list = create_2d_list(result,dir_name)
-        
-        return result_list
+        master_list = create_2d_list(result,dir_name)
+        for element in master_list:
+            final_result_list.append(element)
+                
+    return final_result_list
 
 def create_file_structure(result_list, root_dir_name):
 
@@ -143,7 +194,10 @@ def create_file_structure(result_list, root_dir_name):
                 f.write(line)
                 f.write('\n')
 
-# root = 'Trial' # for ASUS
-root = '/Users/xuhaoxiang/Documents/test_2' # for Mac
+root = 'Trial' # for ASUS
+# root = '/Users/xuhaoxiang/Documents/test_2' # for Mac
 result_list = main(root)
-create_file_structure(result_list, 'empireDirectory')
+print(result_list)
+print(len(result_list))
+# os.chdir("..")
+# create_file_structure(result_list, 'empireDirectory_2')
