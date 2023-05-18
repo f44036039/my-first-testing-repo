@@ -3,7 +3,7 @@ from collections import defaultdict
 
 root = 'Trial' # change this
 new_directory = 'empireDirectory' # change this
-create_diretory_structure_flag = True # Please verify the final_result_list before changing to True
+create_diretory_structure_flag = False # Please verify the final_result_list before changing to True
 
 # ------------------------------------------------------------------------------------------
 # Problem Statement:
@@ -59,6 +59,11 @@ create_diretory_structure_flag = True # Please verify the final_result_list befo
 
 # step 6: Create file structure based on  final_result_list, function name: create_file_structure
 
+#-------------------------------------------------------------
+# function name: get_level_2_set
+# read level 2 directories into a set
+# output: set_of_level_2 = {'D1', 'D2', ..., 'P'},
+#-------------------------------------------------------------
 def get_level_2_set(root):
 
     os.chdir(root)
@@ -76,6 +81,13 @@ def get_level_2_set(root):
             set_of_level_2.add(itr)
 
     return set_of_level_2
+
+#-------------------------------------------------------------------------------------------------------
+# function name: create_dict
+# create a dictionary containing text file and the content
+# output: level_3_dict = {'G.txt':['ODXP', 'ODYP'...],        (Every line under jedi/D1/G.txt)
+#                         'MB.txt':['HDXP','HDDP'...], ...}                      
+#-------------------------------------------------------------------------------------------------------
 
 def create_dict(level_3_list,i, level_1_list, folder_name):
     
@@ -101,6 +113,16 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
 
     return level_3_dict
 
+#-------------------------------------------------------------------------------------------------------
+# function name: create_list
+# create a list of dictionaries
+# output: total_list = [{'G.txt':['ODXP', 'ODYP'...],          (Every line under jedi/D10/G.txt)
+#                        'MB.txt':['HDXP','HDDP'...], ...}, 
+
+#                       {'G.txt':['ODXP', 'ODYP'...],          (Every line under x16/D10/G.txt)
+#                        'MB.txt':['HDXP','GJST'...], ...}]    (total_list should have 1 to 4 dictionaries, 
+#                                                               depends on if the D1 is under x20, for example)
+#-------------------------------------------------------------------------------------------------------
 def create_list(folder_name):
 
     level_1_list = []
@@ -129,6 +151,12 @@ def create_list(folder_name):
     return total_list
 
 
+#-------------------------------------------------------------------------------------------------------
+# function name: create_default_dict
+# Merge the dictionaries inside total_list into 1 dictionary using default dictionary
+# output: result = {'G.txt':{'ODXP', 'ODYP', ...},          
+#                   'MB.txt':{'HDXP','HDDP','GJST'...}, ...}
+#-------------------------------------------------------------------------------------------------------
 
 def create_default_dict(total_list):
     dd = defaultdict(list)
@@ -147,6 +175,12 @@ def create_default_dict(total_list):
 
     return result
 
+#-------------------------------------------------------------------------------------------------------
+# function name: create_2d_list
+# Convert this dictioary into a 2d list
+# output: result_list = [['D1', 'G.txt', 'ODXP', 'ODYP'...],
+#                        ['D1', 'MB.txt', 'HDXP', 'HDDP','GJST'...]...]
+#-------------------------------------------------------------------------------------------------------
 
 def create_2d_list(result,dir_name):
 
@@ -160,6 +194,12 @@ def create_2d_list(result,dir_name):
     
     return result_list
 
+# ----------------------------------------------------------------------------------------------------------------
+# Take the root dir, read everything under the root and create a 2D list containing dir name, file name and conrent
+# output:final_result_list = [['D1', 'G.txt', 'ODXP', 'ODYP'...],
+#                             ['D1', 'MB.txt', 'HDXP', 'HDDP', 'GJST'...],
+#                             ['D2',  'G.txt', 'ABCD', 'HGDJ']...]
+# ---------------------------------------------------------------------------
 
 def main(root):
     set_of_level_2 = get_level_2_set(root)
@@ -178,6 +218,18 @@ def main(root):
                 
     return final_result_list
 
+
+# -----------------------------------------------------------
+# function name: create_file_structure
+# Create file structure based on  final_result_list
+#               root
+#                |
+#         ----------------------
+#        |      |       |       |
+#       D1     D2      D3       P
+#        |      |       |       |
+#      G.txt   G.txt  A.txt   G.txt 
+# ------------------------------------------------------------
 
 def create_file_structure(result_list, root_dir_name, flag):
 
@@ -200,6 +252,8 @@ def create_file_structure(result_list, root_dir_name, flag):
                 for line in content:
                     f.write(line)
                     f.write('\n')
+
+# --------------------- End of functions
 
 final_result_list = main(root)
 print(final_result_list)
