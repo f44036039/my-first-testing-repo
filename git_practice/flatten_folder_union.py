@@ -2,6 +2,23 @@ import os
 import openpyxl
 from collections import defaultdict
 
+def get_level_2_set(root):
+
+    os.chdir(root)
+
+    level_1_list = []
+    for level_1_dir in os.listdir():
+        if os.path.isdir(level_1_dir) == True:
+            level_1_list.append(level_1_dir)
+
+    set_of_level_2 = set()
+
+    for i in range(len(level_1_list)):
+        level_2_list = os.listdir(level_1_list[i])
+        for itr in level_2_list:
+            set_of_level_2.add(itr)
+
+    return set_of_level_2
 
 def create_dict(level_3_list,i, level_1_list, folder_name):
     
@@ -31,12 +48,16 @@ def create_list(folder_name):
         if os.path.isdir(level_1_dir) == True:
             level_1_list.append(level_1_dir)
 
-
+    # print(level_1_list)
     total_list = []
     set_of_level_2 = set()
 
     for i in range(len(level_1_list)):
         level_2_list = os.listdir(level_1_list[i])
+
+        if '.DS_Store' in level_2_list:
+            level_2_list.remove('.DS_Store')
+
         for itr in level_2_list:
             set_of_level_2.add(itr)
 
@@ -68,46 +89,59 @@ def create_default_dict(total_list):
     return result
 
 
-def create_excel(result,dir_name):
-    wb = openpyxl.load_workbook('C:/Users/steven_hsu/Documents/code/empire.xlsx')
-    ws = wb.active
+def create_2d_list(result,dir_name):
+
+    result_list = []
 
     for key, value in result.items():
         list1 = [dir_name ,key]
         for itr in value:
             list1.append(itr)
-        ws.append(list1)
+        result_list.append(list1)
+    '''wb = openpyxl.load_workbook('/Users/xuhaoxiang/code/empire.xlsx')
+    ws = wb.active
+    print(result)
 
-    os.chdir('C:/Users/steven_hsu/Documents/code')
-    wb.save('empire.xlsx')
+    
+        # print(list1)
 
-def get_level_2_set(root):
+    os.chdir('/Users/xuhaoxiang/code')
+    wb.save('empire.xlsx')'''
+    return result_list
 
-    os.chdir(root)
-
-    level_1_list = []
-    for level_1_dir in os.listdir():
-        if os.path.isdir(level_1_dir) == True:
-            level_1_list.append(level_1_dir)
-
-    set_of_level_2 = set()
-
-    for i in range(len(level_1_list)):
-        level_2_list = os.listdir(level_1_list[i])
-        for itr in level_2_list:
-            set_of_level_2.add(itr)
-
-    return set_of_level_2
 
 def main(root):
     set_of_level_2 = get_level_2_set(root)
+    print(set_of_level_2)
 
     for dir_name in set_of_level_2:
 
         total_list = create_list(dir_name)
+        # print(total_list)
         result = create_default_dict(total_list)
-        create_excel(result,dir_name)
+        result_list = create_2d_list(result,dir_name)
+        
+        return result_list
 
-root = 'Trial'
-main(root)
+# root = 'Trial'
+root = '/Users/xuhaoxiang/Documents/test_2'
+result_list = main(root)
 
+for i in range(len(result_list)):
+
+    info = result_list[i]
+
+    dir_name = info[0]
+
+    file_name = info[1]
+
+    content = info[2:]
+
+    root_dir_name = 'empireDirectory'
+    if not os.path.exists(root_dir_name + '/' + dir_name):
+        os.makedirs(root_dir_name + '/' + dir_name)
+
+    with open(root_dir_name + '/' + dir_name + '/' + file_name, 'w') as f:
+        for line in content:
+            f.write(line)
+            f.write('\n')
