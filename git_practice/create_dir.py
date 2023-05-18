@@ -2,12 +2,12 @@ import os
 import openpyxl
 import pandas as pd
 
-data = pd.read_excel('Trial/try.xlsx')
+data = pd.read_excel('empire.xlsx')
 print(data)
 
 # os.makedirs()
 
-for i in range(len(data) - 1):
+for i in range(len(data)):
 
     info = data.iloc[i,:].dropna()
 
@@ -17,7 +17,7 @@ for i in range(len(data) - 1):
 
     content = info[2:]
 
-    root_dir_name = 'skywalkerDirectory'
+    root_dir_name = 'empireDirectory'
     if not os.path.exists(root_dir_name + '/' + dir_name):
         os.makedirs(root_dir_name + '/' + dir_name)
 
