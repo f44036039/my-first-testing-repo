@@ -1,11 +1,8 @@
 import os
-import openpyxl
 import pandas as pd
 
 data = pd.read_excel('empire.xlsx')
 print(data)
-
-# os.makedirs()
 
 for i in range(len(data)):
 
