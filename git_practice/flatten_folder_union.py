@@ -1,6 +1,9 @@
 import os
 from collections import defaultdict
 
+root = 'Trial' # change this
+new_directory = 'empireDirectory' # change this
+create_diretory_structure_flag = False # Please verify the final_result_list before changing to True
 # ------------------------------------------------------------------------------------------
 # Problem Statement:
 # Before:
@@ -14,7 +17,7 @@ from collections import defaultdict
 #   |   |  |    |    |  |    |  |    |
 #  D10 D11 PLC  D10 PLC D10 PLC D63  PLC    # level 2
 #   |   |  |    |    |  |    |  |    |
-#  G.txt   G.txt  G.txt   G.txt A.txt       # level 3 (or file)
+#  G.txt   G.txt G.txt  G.txt   A.txt       # level 3 (or file)
 
 # Combine everything under G.txt level, then create file structure as
 # After :
@@ -22,36 +25,38 @@ from collections import defaultdict
 #                |
 #         ----------------------
 #        |      |       |       |
-#       D10    D11      D63    PLC
+#       D10     D11     D63     PLC
 #        |      |       |       |
 #      G.txt   G.txt  A.txt   G.txt 
 
-# The content under D10 / G.txt should not be mixed with D11 / G.txt or PLC / G.txt
+# The content under D1 / G.txt should not be mixed with D2 / G.txt or P / G.txt
 #------------------------------------------------------------------------------------------------
 
 # Sol step:
-# step 1, read level 2 directories into a set, set_of_level_2 = {'D10', 'D11', ..., 'PLC'},   function name: get_level_2_set
 
-# step 2: for every element inside this set, for example, 'D10', crate a list of dictionaries,functiona name: create_list, crate_dict
-#                                   total_list = [{'G.txt':['ODXP', 'ODYP', ...],          (Every line under jedi/D10/G.txt)
-#                                                  'MB.txt':['HDXP','HDDP', ...], ...}, 
+# step 1, read level 2 directories into a set, function name: get_level_2_set
+#                                   set_of_level_2 = {'D10', 'D11', ..., 'PLC'},   
 
-#                                                 {'G.txt':['ODXP', 'ODYP', ...],          (Every line under x16/D10/G.txt)
-#                                                  'MB.txt':['HDXP','HDDP', ...], ...}]    (total_list should have 1 to 4 dictionaries, 
+# step 2: for every element inside this set, for example, 'D10', create a list of dictionaries,functiona name: create_list, create_dict
+#                                   total_list = [{'G.txt':['ODXP', 'ODYP'...],          (Every line under jedi/D10/G.txt)
+#                                                  'MB.txt':['HDXP','HDDP'...], ...}, 
+
+#                                                 {'G.txt':['ODXP', 'ODYP'...],          (Every line under x16/D10/G.txt)
+#                                                  'MB.txt':['HDXP','GJST'...], ...}]    (total_list should have 1 to 4 dictionaries, 
 #                                                                                           depends on if the D10 is under x20, for example)
 
 # step 3: Merge the dictionaries inside total_list into 1 dictionary using default dictionary, function name: create_default_dict
 #                                   result = {'G.txt':{'ODXP', 'ODYP', ...},          
-#                                             'MB.txt':{'HDXP','HDDP', ...}, ...}
+#                                             'MB.txt':{'HDXP','HDDP','GJST'...}, ...}
 
 # step 4: Convert this dictioary into a 2d list, function name: create_2d_list
 #                                   result_list = [['D10', 'G.txt', 'ODXP', 'ODYP'...],
-#                                                  ['D10', 'MB.txt', 'HDXP', 'HDDP'...]...]
+#                                                  ['D10', 'MB.txt', 'HDXP', 'HDDP','GJST'...]...]
 
 # step 5: Append this list to other level 2 directory name list, to create final_result_list, function name: main
-#                                    final_result_list = [['D10', 'G.txt', 'ODXP', 'ODYP'...],
-#                                                         ['D10', 'MB.txt', 'HDXP', 'HDDP'...],
-#                                                         ['D11',  'G.txt', 'ABCD', 'HGDJ']...]
+#                                   final_result_list = [['D10', 'G.txt', 'ODXP', 'ODYP'...],
+#                                                        ['D10', 'MB.txt', 'HDXP', 'HDDP', 'GJST'...],
+#                                                        ['D11',  'G.txt', 'ABCD', 'HGDJ']...]
 
 # step 6: Create file structure based on  final_result_list, function name: create_file_structure
 
@@ -79,7 +84,6 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
 
     for file_name in level_3_list:
         if os.path.isdir(file_name) == True:
-            # print('found file')
             level_3_list.remove(file_name)
         
         with open(os.path.join(os.path.join(level_1_list[i],folder_name),file_name), 'r') as f:
@@ -160,7 +164,7 @@ def create_2d_list(result,dir_name):
 def main(root):
     set_of_level_2 = get_level_2_set(root)
     set_of_level_2.discard('LastSize.txt')
-    
+
     final_result_list = []
 
     for dir_name in set_of_level_2:
@@ -174,30 +178,30 @@ def main(root):
                 
     return final_result_list
 
-def create_file_structure(result_list, root_dir_name):
+def create_file_structure(result_list, root_dir_name, flag):
 
-    for i in range(len(result_list)):
+    if flag == True:
+        os.chdir("..")
+        for i in range(len(result_list)):
 
-        info = result_list[i]
+            info = result_list[i]
 
-        dir_name = info[0]
+            dir_name = info[0]
 
-        file_name = info[1]
+            file_name = info[1]
 
-        content = info[2:]
+            content = info[2:]
 
-        if not os.path.exists(root_dir_name + '/' + dir_name):
-            os.makedirs(root_dir_name + '/' + dir_name)
+            if not os.path.exists(root_dir_name + '/' + dir_name):
+                os.makedirs(root_dir_name + '/' + dir_name)
 
-        with open(root_dir_name + '/' + dir_name + '/' + file_name, 'w') as f:
-            for line in content:
-                f.write(line)
-                f.write('\n')
+            with open(root_dir_name + '/' + dir_name + '/' + file_name, 'w') as f:
+                for line in content:
+                    f.write(line)
+                    f.write('\n')
 
-root = 'Trial' # for ASUS
-# root = '/Users/xuhaoxiang/Documents/test_2' # for Mac
-result_list = main(root)
-print(result_list)
-print(len(result_list))
-# os.chdir("..")
-# create_file_structure(result_list, 'empireDirectory_2')
+
+
+final_result_list = main(root)
+print(final_result_list)
+create_file_structure(final_result_list,new_directory, create_diretory_structure_flag)
