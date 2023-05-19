@@ -3,7 +3,7 @@ from collections import defaultdict
 
 root = 'Trial' # change this
 new_directory = 'empireDirectory' # change this
-create_diretory_structure_flag = False # Please verify the final_result_list before changing to True
+create_diretory_structure_flag = True # Please verify the final_result_list before changing to True
 
 # ------------------------------------------------------------------------------------------
 # Problem Statement:
@@ -138,13 +138,8 @@ def create_list(folder_name):
         if '.DS_Store' in level_2_list:
             level_2_list.remove('.DS_Store') # for Mac
 
-        if 'LastSize.txt' in level_2_list:
-                level_2_list.remove('LastSize.txt')
-
         if folder_name in level_2_list:
             file_list = os.listdir(os.path.join(level_1_list[i],folder_name))
-            if 'LastSize.txt' in file_list:
-                file_list.remove('LastSize.txt')
             level_3_dict = create_dict(file_list, i, level_1_list, folder_name)
             total_list.append(level_3_dict)
 
@@ -210,7 +205,6 @@ def main(root):
     for dir_name in set_of_level_2:
 
         total_list = create_list(dir_name)
-        print(total_list)
         result = create_default_dict(total_list)
         master_list = create_2d_list(result,dir_name)
         for element in master_list:
