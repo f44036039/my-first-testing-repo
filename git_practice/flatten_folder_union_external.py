@@ -62,7 +62,7 @@ create_diretory_structure_flag = False # Please verify the final_result_list bef
 #-------------------------------------------------------------
 # function name: get_level_2_set
 # read level 2 directories into a set
-# output: set_of_level_2 = {'D1', 'D2', ..., 'P'},
+# output: set_of_level_2 = {'D1', 'D2', ..., 'P'}
 #-------------------------------------------------------------
 def get_level_2_set(root):
 
