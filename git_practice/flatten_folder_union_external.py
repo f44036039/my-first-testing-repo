@@ -177,12 +177,12 @@ def create_default_dict(total_list):
 #                        ['D1', 'MB.txt', 'IJKL', 'MNOP','XYNZ'...]...]
 #-------------------------------------------------------------------------------------------------------
 
-def create_2d_list(result,dir_name):
+def create_2d_list(result, dir_name):
 
     result_list = []
 
     for key, value in result.items():
-        list1 = [dir_name ,key]
+        list1 = [dir_name, key]
         for itr in value:
             list1.append(itr)
         result_list.append(list1)
@@ -203,10 +203,9 @@ def main(root):
     final_result_list = []
 
     for dir_name in set_of_level_2:
-
         total_list = create_list(dir_name)
         result = create_default_dict(total_list)
-        master_list = create_2d_list(result,dir_name)
+        master_list = create_2d_list(result, dir_name)
         for element in master_list:
             final_result_list.append(element)
                 
