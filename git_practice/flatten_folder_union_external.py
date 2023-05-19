@@ -3,7 +3,7 @@ from collections import defaultdict
 
 root = 'Trial' # change this
 new_directory = 'empireDirectory' # change this
-create_diretory_structure_flag = True # Please verify the final_result_list before changing to True
+create_diretory_structure_flag = False # Please verify the final_result_list before changing to True
 
 # ------------------------------------------------------------------------------------------
 # Problem Statement:
@@ -246,6 +246,8 @@ def create_file_structure(result_list, root_dir_name, flag):
                 for line in content:
                     f.write(line)
                     f.write('\n')
+    else:
+        print('Did not create new file structure')
 
 # --------------------- End of functions
 
