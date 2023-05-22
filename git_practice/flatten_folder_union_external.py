@@ -37,15 +37,15 @@ create_diretory_structure_flag = False # Please verify the final_result_list bef
 # step 1, read level 2 directories into a set, set_of_level_2 = {'D1', 'D2', ..., 'P'},   function name: get_level_2_set
 
 # step 2: for every element inside this set, for example, 'D1', create a list of dictionaries,functiona name: create_list, create_dict
-#                                   total_list = [{'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi/D1/G.txt)
+#                                   master_list = [{'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi/D1/G.txt)
 #                                                  'MB.txt':['IJKL','MNOP', ...], ...}, 
 
 #                                                 {'G.txt':['ABCD', 'EFGH', ...],          (Every line under x16/D2/G.txt)
 #                                                  'MB.txt':['IJKL','XYNZ', ...], ...}]    (total_list should have 1 to 4 dictionaries, 
 #                                                                                           depends on if the D1 is under x20, for example)
 
-# step 3: Merge the dictionaries inside total_list into 1 dictionary using default dictionary, function name: create_default_dict
-#                                   result = {'G.txt':{'ABCD', 'EFGH', ...},          
+# step 3: Merge the dictionaries inside total_list into 1 dictionary using default dictionary, function name: merge_dictionaries
+#                                   result_dict = {'G.txt':{'ABCD', 'EFGH', ...},          
 #                                             'MB.txt':{'IJKL','MNOP','XYNZ'...}, ...}
 
 # step 4: Convert this dictioary into a 2d list, function name: create_2d_list
@@ -116,11 +116,11 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
 #-------------------------------------------------------------------------------------------------------
 # function name: create_list
 # create a list of dictionaries
-# output: total_list = [{'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi/D1/G.txt)
+# output: master_list = [{'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi/D1/G.txt)
 #                        'MB.txt':['IJKL','MNOP', ...], ...}, 
 
 #                       {'G.txt':['ABCD', 'EFGH', ...],          (Every line under x16/D2/G.txt)
-#                        'MB.txt':['IJKL','XYNZ', ...], ...}]    (total_list should have 1 to 4 dictionaries, 
+#                        'MB.txt':['IJKL','XYNZ', ...], ...}]    (master_list should have 1 to 4 dictionaries, 
 #                                                                 depends on if the D1 is under x20, for example)
 #-------------------------------------------------------------------------------------------------------
 def create_list(folder_name):
@@ -130,7 +130,7 @@ def create_list(folder_name):
         if os.path.isdir(level_1_dir) == True:
             level_1_list.append(level_1_dir)
 
-    total_list = []
+    master_list = []
 
     for i in range(len(level_1_list)):
         level_2_list = os.listdir(level_1_list[i])
@@ -141,25 +141,25 @@ def create_list(folder_name):
         if folder_name in level_2_list:
             file_list = os.listdir(os.path.join(level_1_list[i],folder_name))
             level_3_dict = create_dict(file_list, i, level_1_list, folder_name)
-            total_list.append(level_3_dict)
+            master_list.append(level_3_dict)
 
-    return total_list
+    return master_list
 
 
 #-------------------------------------------------------------------------------------------------------
-# function name: create_default_dict
+# function name: merge_dictionaries
 # Merge the dictionaries inside total_list into 1 dictionary using default dictionary
-# output: result = {'G.txt':{'ABCD', 'EFGH', ...},          
-#                   'MB.txt':{'IJKL','MNOP','XYNZ'...}, ...}
+# output: result_dict = {'G.txt':{'ABCD', 'EFGH', ...},          
+#                        'MB.txt':{'IJKL','MNOP','XYNZ'...}, ...}
 #-------------------------------------------------------------------------------------------------------
 
-def create_default_dict(total_list):
+def merge_dictionaries(master_list):
     dd = defaultdict(list)
-    for d in (total_list):
+    for d in (master_list):
         for key, value in d.items():
             dd[key].append(value)
 
-    result = {}
+    result_dict = {}
 
     for key, value in dd.items():
         flat_list = []
@@ -168,9 +168,9 @@ def create_default_dict(total_list):
             for element in sublist:
                 flat_list.append(element)
 
-        result[key] = set(flat_list)
+        result_dict[key] = set(flat_list)
 
-    return result
+    return result_dict
 
 #-------------------------------------------------------------------------------------------------------
 # function name: create_2d_list
@@ -179,17 +179,17 @@ def create_default_dict(total_list):
 #                        ['D1', 'MB.txt', 'IJKL', 'MNOP','XYNZ'...]...]
 #-------------------------------------------------------------------------------------------------------
 
-def create_2d_list(result,dir_name):
+def create_2d_list(result_dict, dir_name):
 
     result_list = []
 
-    for key, value in result.items():
-        list1 = [dir_name ,key]
+    for key, value in result_dict.items():
+        temp_list = [dir_name, key]
 
         for itr in value:
-            list1.append(itr)
+            temp_list.append(itr)
 
-        result_list.append(list1)
+        result_list.append(temp_list)
     
     return result_list
 
@@ -206,9 +206,9 @@ def main(root):
     final_result_list = []
 
     for dir_name in set_of_level_2:
-        total_list = create_list(dir_name)
-        result = create_default_dict(total_list)
-        master_list = create_2d_list(result, dir_name)
+        master_list = create_list(dir_name)
+        result_dict = merge_dictionaries(master_list)
+        master_list = create_2d_list(result_dict, dir_name)
 
         for element in master_list:
             final_result_list.append(element)
