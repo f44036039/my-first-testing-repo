@@ -77,6 +77,7 @@ def get_level_2_set(root):
 
     for i in range(len(level_1_list)):
         level_2_list = os.listdir(level_1_list[i])
+
         for itr in level_2_list:
             set_of_level_2.add(itr)
 
@@ -95,7 +96,6 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
 
     for file_name in level_3_list:
         if os.path.isdir(file_name) == True:
-            # print('found file')
             level_3_list.remove(file_name)
         
         with open(os.path.join(os.path.join(level_1_list[i],folder_name),file_name), 'r') as f:
@@ -106,9 +106,9 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
             for line in f:
                 # Remove the newline character at the end of the line
                 line = line.strip()
-
                 # Append the line to the list
                 lines.append(line)
+
         level_3_dict[file_name] = lines
 
     return level_3_dict
@@ -163,9 +163,11 @@ def create_default_dict(total_list):
 
     for key, value in dd.items():
         flat_list = []
+
         for sublist in value:
             for element in sublist:
                 flat_list.append(element)
+
         result[key] = set(flat_list)
 
     return result
@@ -177,14 +179,16 @@ def create_default_dict(total_list):
 #                        ['D1', 'MB.txt', 'IJKL', 'MNOP','XYNZ'...]...]
 #-------------------------------------------------------------------------------------------------------
 
-def create_2d_list(result, dir_name):
+def create_2d_list(result,dir_name):
 
     result_list = []
 
     for key, value in result.items():
-        list1 = [dir_name, key]
+        list1 = [dir_name ,key]
+
         for itr in value:
             list1.append(itr)
+
         result_list.append(list1)
     
     return result_list
@@ -199,13 +203,13 @@ def create_2d_list(result, dir_name):
 def main(root):
     set_of_level_2 = get_level_2_set(root)
     set_of_level_2.discard('LastSize.txt')
-
     final_result_list = []
 
     for dir_name in set_of_level_2:
         total_list = create_list(dir_name)
         result = create_default_dict(total_list)
         master_list = create_2d_list(result, dir_name)
+
         for element in master_list:
             final_result_list.append(element)
                 
@@ -224,18 +228,15 @@ def main(root):
 #      G.txt   G.txt  A.txt   G.txt 
 # ------------------------------------------------------------
 
+
 def create_file_structure(result_list, root_dir_name, flag):
 
     if flag == True:
         os.chdir("..")
         for i in range(len(result_list)):
-
             info = result_list[i]
-
             dir_name = info[0]
-
             file_name = info[1]
-
             content = info[2:]
 
             if not os.path.exists(root_dir_name + '/' + dir_name):
@@ -247,6 +248,7 @@ def create_file_structure(result_list, root_dir_name, flag):
                     f.write('\n')
     else:
         print('Did not create new file structure')
+
 
 # --------------------- End of functions
 
