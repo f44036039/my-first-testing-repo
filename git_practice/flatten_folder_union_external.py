@@ -18,7 +18,7 @@ create_diretory_structure_flag = False # Please verify the final_result_list bef
 #   |   |  |    |    |  |    |  |    |
 #  D1  D2  P    D1   P D1    P  D3   P      # level 2
 #   |   |  |    |    |  |    |  |    |
-#  G.txt   G.txt  G.txt   G.txt A.txt       # level 3 (or file)
+# G.txt   G.txt G.txt   G.txt   A.txt       # level 3 (or file)
 
 # Combine everything under G.txt level, then create file structure as
 # After :
