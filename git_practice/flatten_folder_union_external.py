@@ -233,16 +233,19 @@ def create_file_structure(result_list, root_dir_name, flag):
 
     if flag == True:
         os.chdir("..")
+        
         for i in range(len(result_list)):
             info = result_list[i]
             dir_name = info[0]
             file_name = info[1]
             content = info[2:]
+            dir_path = os.path.join(root_dir_name, dir_name) # root_dir_name + '/' + dir_name
 
-            if not os.path.exists(root_dir_name + '/' + dir_name):
-                os.makedirs(root_dir_name + '/' + dir_name)
+            if not os.path.exists(dir_path): 
+                os.makedirs(dir_path)
 
-            with open(root_dir_name + '/' + dir_name + '/' + file_name, 'w') as f:
+            file_path = os.path.join(dir_path, file_name) # root_dir_name + '/' + dir_name + '/' + file_name
+            with open(file_path, 'w') as f:
                 for line in content:
                     f.write(line)
                     f.write('\n')
