@@ -38,15 +38,15 @@ create_diretory_structure_flag = False # Please verify the final_result_list bef
 
 # step 2: for every element inside this set, for example, 'D1', create a list of dictionaries,functiona name: create_list, create_dict
 #                                   master_list = [{'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi/D1/G.txt)
-#                                                  'MB.txt':['IJKL','MNOP', ...], ...}, 
+#                                                   'MB.txt':['IJKL','MNOP', ...], ...}, 
 
-#                                                 {'G.txt':['ABCD', 'EFGH', ...],          (Every line under x16/D2/G.txt)
-#                                                  'MB.txt':['IJKL','XYNZ', ...], ...}]    (total_list should have 1 to 4 dictionaries, 
-#                                                                                           depends on if the D1 is under x20, for example)
+#                                                  {'G.txt':['ABCD', 'EFGH', ...],          (Every line under x16/D2/G.txt)
+#                                                   'MB.txt':['IJKL','XYNZ', ...], ...}]    (total_list should have 1 to 4 dictionaries, 
+#                                                                                            depends on if the D1 is under x20, for example)
 
 # step 3: Merge the dictionaries inside total_list into 1 dictionary using default dictionary, function name: merge_dictionaries
 #                                   result_dict = {'G.txt':{'ABCD', 'EFGH', ...},          
-#                                             'MB.txt':{'IJKL','MNOP','XYNZ'...}, ...}
+#                                                  'MB.txt':{'IJKL','MNOP','XYNZ'...}, ...}
 
 # step 4: Convert this dictioary into a 2d list, function name: create_2d_list
 #                                   result_list = [['D1', 'G.txt', 'ABCD', 'EFGH'...],
