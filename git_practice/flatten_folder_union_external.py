@@ -126,6 +126,7 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
 def create_list(folder_name):
 
     level_1_list = []
+    
     for level_1_dir in os.listdir():
         if os.path.isdir(level_1_dir) == True:
             level_1_list.append(level_1_dir)
@@ -139,7 +140,7 @@ def create_list(folder_name):
             level_2_list.remove('.DS_Store') # for Mac
 
         if folder_name in level_2_list:
-            file_list = os.listdir(os.path.join(level_1_list[i], folder_name))
+            file_list = os.listdir(os.path.join(level_1_list[i],folder_name))
             level_3_dict = create_dict(file_list, i, level_1_list, folder_name)
             master_list.append(level_3_dict)
 
@@ -154,7 +155,9 @@ def create_list(folder_name):
 #-------------------------------------------------------------------------------------------------------
 
 def merge_dictionaries(master_list):
+
     dd = defaultdict(list)
+
     for d in (master_list):
         for key, value in d.items():
             dd[key].append(value)
@@ -218,7 +221,7 @@ def main(root):
 
 # -----------------------------------------------------------
 # function name: create_file_structure
-# Create file structure based on  final_result_list
+# Create file structure based on final_result_list
 #               root
 #                |
 #         ----------------------
