@@ -73,32 +73,34 @@ def get_level_2_set(root):
         if os.path.isdir(level_1_dir) == True:
             level_1_list.append(level_1_dir)
 
+    # At this part, level_1_list should be ['jedi','x16','x20','x23']
+
     set_of_level_2 = set()
 
-    for i in range(len(level_1_list)):
-        level_2_list = os.listdir(level_1_list[i])
+    for level_1_dir in level_1_list:
+        level_2_list = os.listdir(level_1_dir) # for example, everything under jedi, may be ['D1','D2',...]
 
-        for itr in level_2_list:
-            set_of_level_2.add(itr)
+        for level_2_dir in level_2_list:
+            set_of_level_2.add(level_2_dir) # put everything in the list to the set
 
     return set_of_level_2
 
 #-------------------------------------------------------------------------------------------------------
 # function name: create_dict
 # create a dictionary containing text file and the content
-# output: level_3_dict = {'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi/D1/G.txt)
-#                         'MB.txt':['IJKL','MNOP', ...], ...}                      
+# output: file_dict = {'G.txt':['ABCD', 'EFGH', ...],      (Every line under jedi / D1 / G.txt)
+#                      'MB.txt':['IJKL','MNOP', ...], ...}                      
 #-------------------------------------------------------------------------------------------------------
 
-def create_dict(level_3_list,i, level_1_list, folder_name):
+def create_dict(file_list, level_1_dir, folder_name):
     
-    level_3_dict = {}
+    file_dict = {}
 
-    for file_name in level_3_list:
+    for file_name in file_list:
         if os.path.isdir(file_name) == True:
-            level_3_list.remove(file_name)
+            file_list.remove(file_name)
         
-        with open(os.path.join(os.path.join(level_1_list[i], folder_name), file_name), 'r') as f:
+        with open(os.path.join(os.path.join(level_1_dir, folder_name), file_name), 'r') as f: # ex: jedi / D1 / G.txt
             # Create an empty list to store the lines
             lines = []
 
@@ -109,40 +111,43 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
                 # Append the line to the list
                 lines.append(line)
 
-        level_3_dict[file_name] = lines
+        file_dict[file_name] = lines
 
-    return level_3_dict
+    return file_dict
 
 #-------------------------------------------------------------------------------------------------------
 # function name: create_list
 # create a list of dictionaries
-# output: master_list = [{'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi/D1/G.txt)
+# output: master_list = [{'G.txt':['ABCD', 'EFGH', ...],          (Every line under jedi / D1 / G.txt)
 #                        'MB.txt':['IJKL','MNOP', ...], ...}, 
 
-#                       {'G.txt':['ABCD', 'EFGH', ...],          (Every line under x16/D2/G.txt)
+#                       {'G.txt':['ABCD', 'EFGH', ...],          (Every line under x16 / D2 / G.txt)
 #                        'MB.txt':['IJKL','XYNZ', ...], ...}]    (master_list should have 1 to 4 dictionaries, 
 #                                                                 depends on if the D1 is under x20, for example)
 #-------------------------------------------------------------------------------------------------------
 def create_list(folder_name):
 
     level_1_list = []
-    
+
     for level_1_dir in os.listdir():
         if os.path.isdir(level_1_dir) == True:
             level_1_list.append(level_1_dir)
 
+     # At this part, level_1_list should be ['jedi','x16','x20','x23']
+
     master_list = []
 
-    for i in range(len(level_1_list)):
-        level_2_list = os.listdir(level_1_list[i])
+    for level_1_dir in level_1_list:
+        level_2_list = os.listdir(level_1_dir) # for example, everything under jedi, may be ['D10','D11',...]
 
         if '.DS_Store' in level_2_list:
             level_2_list.remove('.DS_Store') # for Mac
 
-        if folder_name in level_2_list:
-            file_list = os.listdir(os.path.join(level_1_list[i],folder_name))
-            level_3_dict = create_dict(file_list, i, level_1_list, folder_name)
-            master_list.append(level_3_dict)
+        if folder_name in level_2_list: # for example, D10
+            file_list = os.listdir(os.path.join(level_1_dir, folder_name)) # ex: everything under jedi / D10, may be ['G.txt','MB.txt, ...]
+            file_dict = create_dict(file_list, level_1_dir, folder_name) # ex: every text data under jedi / D10, {'G.txt':['ODXP', 'ODYP'...],
+#                                                                                                                 'MB.txt':['HDXP','HDDP'...], ...}
+            master_list.append(file_dict) # append those dictionaries to a list, the list should have 1-4 dictionaries
 
     return master_list
 
@@ -158,20 +163,24 @@ def merge_dictionaries(master_list):
 
     dd = defaultdict(list)
 
-    for d in (master_list):
+    for d in (master_list): # master_list has 1-4 dictionaries
         for key, value in d.items():
             dd[key].append(value)
+
+    # dd will be a dictionary with nested lists, ex: {'G.txt':[['ABCD', 'EFGH'...], ['ABCD', 'EFGH'...]],
+    #                                                 'MB.txt':[['IJKL', 'MNOP'...], ['IJKL', 'XYNZ'...]] ...}
+    # so we want to flatten the nested list and turn it into a set to remove duplicate
 
     result_dict = {}
 
     for key, value in dd.items():
-        flat_list = []
+        flat_list = [] # flatten the nested list
 
         for sublist in value:
             for element in sublist:
                 flat_list.append(element)
 
-        result_dict[key] = set(flat_list)
+        result_dict[key] = set(flat_list) # turn the flatten list into a set and put into a dictionary
 
     return result_dict
 
@@ -204,16 +213,19 @@ def create_2d_list(result_dict, dir_name):
 # ---------------------------------------------------------------------------
 
 def main(root):
-    set_of_level_2 = get_level_2_set(root)
+    set_of_level_2 = get_level_2_set(root) # ex: {'D1', 'D2', ..., 'PLC'}
     set_of_level_2.discard('LastSize.txt')
     final_result_list = []
 
-    for dir_name in set_of_level_2:
-        master_list = create_list(dir_name)
-        result_dict = merge_dictionaries(master_list)
-        master_list = create_2d_list(result_dict, dir_name)
+    for dir_name in set_of_level_2: # ex: 'D1'
+        master_list = create_list(dir_name) # ex: [{'G.txt':['ABCD', 'EFGH'...], 'MB.txt':['IJKL','MNOP'...], ...}, 
+                                            #      {'G.txt':['ABCD', 'EFGH'...], 'MB.txt':['IJKL','XYNZ'...], ...}]
 
-        for element in master_list:
+        result_dict = merge_dictionaries(master_list) # {'G.txt':{'ABCD', 'EFGH', ...}, 'MB.txt':{'IJKL','MNOP','XYNZ'...}, ...}
+
+        result_list = create_2d_list(result_dict, dir_name) # [['D10', 'G.txt', 'ABCD', 'EFGH'...], ['D10', 'MB.txt', 'IJKL', 'MNOP','XYNZ'...]]
+
+        for element in result_list:
             final_result_list.append(element)
                 
     return final_result_list
@@ -236,12 +248,12 @@ def create_file_structure(result_list, root_dir_name, flag):
 
     if flag == True:
         os.chdir("..")
-        
-        for i in range(len(result_list)):
-            info = result_list[i]
-            dir_name = info[0]
-            file_name = info[1]
-            content = info[2:]
+
+        for i in range(len(result_list)): 
+            info = result_list[i] # ex: ['D1', 'G.txt', 'ABCD', 'EFGH']
+            dir_name = info[0] # ex: 'D1'
+            file_name = info[1] # ex: 'G.txt'
+            content = info[2:] # ex: ['ABCD', 'EFGH']
             dir_path = os.path.join(root_dir_name, dir_name) # root_dir_name + '/' + dir_name
 
             if not os.path.exists(dir_path): 
