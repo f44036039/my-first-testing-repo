@@ -98,7 +98,7 @@ def create_dict(level_3_list,i, level_1_list, folder_name):
         if os.path.isdir(file_name) == True:
             level_3_list.remove(file_name)
         
-        with open(os.path.join(os.path.join(level_1_list[i],folder_name),file_name), 'r') as f:
+        with open(os.path.join(os.path.join(level_1_list[i], folder_name), file_name), 'r') as f:
             # Create an empty list to store the lines
             lines = []
 
@@ -139,7 +139,7 @@ def create_list(folder_name):
             level_2_list.remove('.DS_Store') # for Mac
 
         if folder_name in level_2_list:
-            file_list = os.listdir(os.path.join(level_1_list[i],folder_name))
+            file_list = os.listdir(os.path.join(level_1_list[i], folder_name))
             level_3_dict = create_dict(file_list, i, level_1_list, folder_name)
             master_list.append(level_3_dict)
 
@@ -257,4 +257,4 @@ def create_file_structure(result_list, root_dir_name, flag):
 
 final_result_list = main(root)
 print(final_result_list)
-create_file_structure(final_result_list,new_directory, create_diretory_structure_flag)
+create_file_structure(final_result_list, new_directory, create_diretory_structure_flag)
