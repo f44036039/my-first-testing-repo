@@ -1,10 +1,14 @@
 import os
 from collections import defaultdict
+import openpyxl
 
 root = 'Trial' # change this
 new_directory = 'empireDirectory' # change this
-create_diretory_structure_flag = False # Please verify the final_result_list before changing to True
 
+excel_file_name = 'file_structure.xlsx'
+create_excel_flag = True
+
+create_diretory_structure_flag = False # Please verify the final_result_list before changing to True
 # ------------------------------------------------------------------------------------------
 # Problem Statement:
 # Before:
@@ -60,11 +64,11 @@ create_diretory_structure_flag = False # Please verify the final_result_list bef
 # step 6: Create file structure based on  final_result_list, function name: create_file_structure
 
 #-------------------------------------------------------------
-# function name: get_level_2_set
+# function name: get_level_2_list
 # read level 2 directories into a set
-# output: set_of_level_2 = {'D1', 'D2', ..., 'P'}
+# output: sorted_list_of_level_2 = ['D10', 'D11', ..., 'PLC']
 #-------------------------------------------------------------
-def get_level_2_set(root):
+def get_level_2_list(root):
 
     os.chdir(root)
 
@@ -83,7 +87,10 @@ def get_level_2_set(root):
         for level_2_dir in level_2_list:
             set_of_level_2.add(level_2_dir) # put everything in the list to the set
 
-    return set_of_level_2
+    list_of_level_2 = list(set_of_level_2)
+    sorted_list_of_level_2 = sorted(list_of_level_2)
+
+    return sorted_list_of_level_2
 
 #-------------------------------------------------------------------------------------------------------
 # function name: create_dict
@@ -214,12 +221,12 @@ def create_2d_list(result_dict, dir_name):
 
 def main(root):
 
-    set_of_level_2 = get_level_2_set(root) # ex: {'D1', 'D2', ..., 'PLC'}
+    sorted_list_of_level_2 = get_level_2_list(root) # ex: ['D1', 'D2', ..., 'PLC']
     
-    set_of_level_2.discard('LastSize.txt')
+    sorted_list_of_level_2.remove('LastSize.txt')
     final_result_list = []
 
-    for dir_name in set_of_level_2: # ex: 'D1'
+    for dir_name in sorted_list_of_level_2: # ex: 'D1'
         master_list = create_list(dir_name) # ex: [{'G.txt':['ABCD', 'EFGH'...], 'MB.txt':['IJKL','MNOP'...], ...}, 
                                             #      {'G.txt':['ABCD', 'EFGH'...], 'MB.txt':['IJKL','XYNZ'...], ...}]
 
@@ -269,9 +276,26 @@ def create_file_structure(result_list, root_dir_name, flag):
     else:
         print('Did not create new file structure')
 
+def write_to_excel(excel_file_name, final_result_list, flag):
 
+    if flag == True:
+        os.chdir("..")
+        
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.insert_rows(0)
+
+        for itr in final_result_list:
+            ws.append(itr)
+
+        wb.save(excel_file_name)
+        print("excel file created under this directory: ", os.getcwd())
+
+    else:
+        print("Did not create excel file")
 # --------------------- End of functions
 
 final_result_list = main(root)
 print(final_result_list)
 create_file_structure(final_result_list, new_directory, create_diretory_structure_flag)
+write_to_excel(excel_file_name, final_result_list, create_excel_flag)
